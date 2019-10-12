@@ -1,4 +1,5 @@
 import { useState, useEffect } from "react";
+import { throttle } from "../util";
 
 const getSizeFromWidth = width => {
   if (width <= 320) {
@@ -17,11 +18,13 @@ const getSizeFromWidth = width => {
 export default () => {
   const [size, setSize] = useState(getSizeFromWidth(window.innerWidth));
   useEffect(() => {
-    const calcSize = () => {
+    const calcSize = throttle(() => {
       setSize(getSizeFromWidth(window.innerWidth));
-    };
+    });
     window.addEventListener("resize", calcSize);
-    return () => window.removeEventListener("resize", calcSize);
+    return () => {
+      window.removeEventListener("resize", calcSize);
+    };
   }, []);
   return { breakpoint: size };
 };
